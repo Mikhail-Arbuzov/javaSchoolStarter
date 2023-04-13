@@ -16,21 +16,22 @@ public class JavaSchoolStarter {
     }
 
     public List<Map<String, Object>> execute(String request) throws Exception {
+        List<Map<String, Object>> res = new ArrayList<>();
         if (request.startsWith("INSERT VALUES") || request.startsWith("insert values")) {
             Map<String, Object> row1 = insert(request);
             result.add(row1);
+            res.add(row1);
         } else if (request.startsWith("SELECT") || request.startsWith("select")) {
-            select(request, result);
-
+            res = select(request, result);
         } else if (request.startsWith("UPDATE VALUES") || request.startsWith("update values")) {
-            update(request, result);
+            res = update(request, result);
         } else if (request.startsWith("DELETE") || request.startsWith("delete")) {
-            delete(request, result);
+            res = delete(request, result);
         } else {
             throw new InvalidRequestParametersException("Неверно указана команда (insert/update/select/delete)." +
                     " Все символы должны быть либо в верхнем регистре (INSERT VALUES), либо в нижнем (insert values)");
         }
-        return new ArrayList<>();
+        return res;
     }
 
     //метод выполняющий команду INSERT VALUES
@@ -76,7 +77,7 @@ public class JavaSchoolStarter {
 
 
     //метод выполняющий команду UPDATE VALUES
-    private void update(String exec, List<Map<String, Object>> result) throws ParametersException {
+    private List<Map<String, Object>> update(String exec, List<Map<String, Object>> result) throws ParametersException {
         //шаблон соответствующий запросам типа: UPDATE VALUES 'active' = true, 'age' = 46
         String strPattern1 = "^UPDATE VALUES\\s*(\\'[a-zA-Z]+\\'\\s*=+\\s*(\\'[a-zA-Zа-яА-ЯёЁ]+" +
                 "\\'|(true|false|null)|([0-9]+([.][0-9]*)?|[.][0-9]+))\\s*\\,?\\s*)+";
@@ -226,6 +227,8 @@ public class JavaSchoolStarter {
         } else {
             throw new InvalidRequestParametersException("некорректно указан запрос!");
         }
+
+        return result;
     }
 
     /* изменение значения элементов в коллекции List<Map<String, Object>> result
@@ -325,7 +328,7 @@ public class JavaSchoolStarter {
     }
 
     //метод, выполняющий команду DELETE
-    private void delete(String exec, List<Map<String, Object>> result) throws ParametersException {
+    private List<Map<String, Object>> delete(String exec, List<Map<String, Object>> result) throws ParametersException {
         String strRegx1 = "^DELETE\\s*";
 
         //шаблон, соответствующий запросам типа: DELETE WHERE 'id'=1
@@ -440,6 +443,8 @@ public class JavaSchoolStarter {
         } else {
             throw new InvalidRequestParametersException("некорректно указан запрос!");
         }
+
+        return result;
     }
 
     /* удаление элементов из коллекции List<Map<String, Object>> result
@@ -473,7 +478,7 @@ public class JavaSchoolStarter {
     }
 
     //метод выполняющий команду SELECT
-    private void select(String exec, List<Map<String, Object>> result) throws ParametersException {
+    private List<Map<String, Object>> select(String exec, List<Map<String, Object>> result) throws ParametersException {
         String strPattern1 = "^SELECT\\s*";
 
         //шаблон соответствующий запросам типа: SELECT WHERE 'id'=1
@@ -584,6 +589,8 @@ public class JavaSchoolStarter {
         } else {
             throw new InvalidRequestParametersException("некорректно указан запрос!");
         }
+
+        return result;
     }
 
     /*вывод в консоль результата поиска запроса типа
